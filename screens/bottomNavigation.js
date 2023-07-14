@@ -80,7 +80,7 @@ const CustomTabBarButton = ({ iconName, onPress, isFocused }) => (
     //         />}}} />
     // </BottomTab.Navigator>
     // <NavigationContainer>
-            <Tab.Navigator
+            <Tab.Navigator initialRouteName='Book_Appointment'
                 screenOptions={{
                     showLabel: false, // Hide the label of the active tab
                     style: {

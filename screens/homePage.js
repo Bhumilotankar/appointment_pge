@@ -1,4 +1,4 @@
-import {Text, View, TouchableOpacity,BackHandler,Alert} from 'react-native';
+import {Image, Text, View, TouchableOpacity,BackHandler,Alert} from 'react-native';
 import {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -6,6 +6,7 @@ import { responsiveFontSize, responsiveHeight, responsiveWidth } from 'react-nat
 import Activity from 'react-native-vector-icons/MaterialCommunityIcons'
 import Back from 'react-native-vector-icons/MaterialIcons'
 const Home = ({navigation}) => {
+  const [appointments, setAppointments] = useState([]);
 
   const [userName, setUserName] = useState('');
 
@@ -32,6 +33,7 @@ var sec = new Date().getSeconds();*/}
     useEffect(() => {
       fetchUsername();
       retrieveUserName();
+      fetchAppointments();
       BackHandler.addEventListener('hardwareBackPress', handleBackPress);
   
       return () => {
@@ -59,7 +61,20 @@ var sec = new Date().getSeconds();*/}
       return true;
     };
 
+    const fetchAppointments = async () => {
+      try {
+        const response = await fetch(`https://retoolapi.dev/fDK1ci/data?username=${username}`);
+        const jsonData = await response.json();
+        setAppointments(jsonData);
+        console.log(jsonData)
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      }
+    };
+
     return (
+
+      
       <View>
         <TouchableOpacity onPress={handleBackPress}>
         <Back name='arrow-back-ios' size={30} style={{marginLeft:responsiveWidth(2)}}/>
@@ -67,6 +82,7 @@ var sec = new Date().getSeconds();*/}
           {/*<Text style={{color: 'black', fontWeight: 'bold', fontSize: 15}}>
             Thursday {date}, {monthIndexToMonth(month)} 2022
         </Text>*/}
+
 
     <View style={{flexDirection:'row'}}>
       <View style={{ marginLeft: responsiveWidth(5),marginTop:responsiveHeight(1.8)}}>
@@ -154,6 +170,27 @@ var sec = new Date().getSeconds();*/}
         </Text>
         </TouchableOpacity>
       </View>
+
+      <View>
+      {/* Render the appointments list */}
+      {appointments && appointments.length > 0 ? (
+        appointments.map((appointment, index) => (
+          <View key={index}>
+            <Text>Date: {appointment.date}</Text>
+            <Text>Time: {appointment.time}</Text>
+            <Text>Slot: {appointment.slot}</Text>
+          </View>
+        ))
+      ) : (
+        <View style={{flexDirection:'row', marginTop:20,marginHorizontal:20,justifyContent:'space-between'}}>
+          <View style={{width:'50%',justifyContent:'center'}}>
+             <Text numberOfLines={3} ellipsizeMode='tail' style={{color:'grey',fontFamily:'Poppins-Regular',fontSize:20,marginLeft:10}}>No Appointments Available</Text> 
+             </View>
+        <Image source={require('../assets/doctor.png')} style={{marginRight:10,width:140,height:150}}/>
+        </View>
+      )}
+    </View>
+
   
        {/*} <View style={{margin: 20}}>
           <Text style={{fontSize: 30, fontWeight: 'bold', color: 'black'}}>
